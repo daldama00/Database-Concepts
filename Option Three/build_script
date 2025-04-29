@@ -1,1 +1,32 @@
+#!/bin/bash
+set -e
+
+echo "[+] Building buffer overflow examples..."
+gcc buffer_overflow.c -o buffer_overflow
+gcc buffer_overflow_fixed.c -o buffer_overflow_fixed
+
+echo "[+] Testing buffer overflow (expect crash or overrun warning)..."
+./buffer_overflow AAAAAAAAAAAAAAAAAAAAA || echo "Possible overflow detected"
+
+echo "[+] Testing fixed buffer overflow..."
+./buffer_overflow_fixed AAAAAAAAAAAAAAAAAAAAA
+
+echo "[+] Testing SQL Injection..."
+echo -e "admin\n' OR '1'='1" | python3 sql_injection.py
+
+echo "[+] Testing fixed SQL Injection..."
+echo -e "admin\n' OR '1'='1" | python3 sql_injection_fixed.py
+
+echo "[+] Building race condition example..."
+echo "Secret!" > temp.txt
+gcc race_condition.c -o race_condition
+gcc race_condition_fixed.c -o race_condition_fixed
+
+echo "[+] Testing race condition..."
+./race_condition
+
+echo "[+] Testing fixed race condition..."
+./race_condition_fixed
+
+rm temp.txt
 
